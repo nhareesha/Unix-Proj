@@ -1,0 +1,47 @@
+#!/bin/sh
+########################################################################
+#
+#Shell script to determine if file type and permissons
+#
+########################################################################
+
+echo "Enter absolute or relative path of file name : "
+
+read file
+
+if [ -d $file ]
+then
+	echo "Given file is a directory "
+elif [ -f $file ]
+then
+	echo "Given file is a ordinary file "
+elif [ -c $file ]
+then
+	echo "Given file is a character specfic file "
+elif [ -b $file ]
+then
+	echo "Given file is a block specific file "
+else
+	echo "Given file is other file"
+fi
+
+
+
+if [ -r $file ]
+then
+	echo "Fle has READ permissions"
+fi
+
+if [ -w $file ]
+then
+	echo "File has WRITE permission"
+fi
+
+if [ -x $file ]
+then
+	echo "File has EXECUTE permission"
+fi
+
+
+
+

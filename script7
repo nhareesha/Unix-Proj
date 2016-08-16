@@ -1,0 +1,87 @@
+#!/bin/sh
+##########################################################
+#
+### Rename all the files in a given dir that matches the given filename pattern 
+# and extension
+#
+#######################################################################
+
+read -p "Enter file pattern that need to me renamed" basefilename
+
+read -p "Enter file extension type (.xxx)" ext
+
+read -p "Enter directory (optional) " DIR
+
+#echo $ext "\\n" $basefilename "\\n" $DIR
+counter=1
+
+renumber(){
+filename=$1
+fileext=$2
+fileresult=`ls | grep "$filename"`
+
+echo "$fileresult"
+
+for file in `ls`
+do
+	#echo "Hree is the $file"
+
+	#Check basefile pattern
+	val=`echo "$file"|grep "$filename"`
+
+	#If matches and file exists
+	if [ "$val" ]
+	then
+		echo "Matched base extesion file $val"
+		
+		#checks the extension for the matched file against the given extension
+		ext1=`echo "$val" | sed -n 's/.*\(\..\{2,\}\).*/\1/p'`
+		
+		#If extension also matches for the given file
+		if [ "$ext1" = "$fileext" ]
+		then
+			#Rename the file 
+			if [ $counter -le 9 ]
+			then
+				newfile=$filename"00"$counter$ext1
+			elif [ $counter -ge 10 ] && [ $counter -le 99 ]
+			then
+				newfile=$filename"0"$counter$ext1
+			else
+				newfile=$filename$counter$ext1
+			fi
+
+			`mv "$file" "$newfile"`
+			counter=`expr $counter + 1`
+		fi
+	fi
+done
+}
+
+
+##Checks to see if the base string is null or empty
+checkBaseFileName(){
+basename=$1
+baseext=$2
+
+	if [ ! -z "$basename"  ] && [ "$basename" ]
+	then
+		#If basefilename is valid string then renumber function is called for renaming
+		renumber $basename $baseext
+	else
+		echo "given file pattern is empty or null"
+	fi
+}
+
+
+if [ -d "$DIR" ]
+then
+	cd "$DIR"
+	#calling function to check the given filename string
+	checkBaseFileName $basefilename $ext
+	
+else
+	echo "No need to change directory , consider pwd"
+
+	checkBaseFileName $basefilename $ext
+fi

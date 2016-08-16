@@ -1,0 +1,24 @@
+#!/bin/sh
+################################################################################
+#
+#read list of numbers from input and out put is sum of numbers
+#
+################################################################################
+
+read -p "Enter list of numbers and press enter in command line : " arr_nm
+
+echo $arr_nm
+sum=0
+
+for num in $arr_nm
+do
+	sum=`expr $sum + $num`
+done
+
+echo "Sum of $arr_nm is : $sum"
+
+
+	
+
+
+

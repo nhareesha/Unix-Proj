@@ -1,0 +1,31 @@
+#!/bin/sh
+####################################################################
+#
+#Script to fix typoes in file name or renaming files
+####################################################################
+
+dir=$1
+counter=0
+
+if [ -d "$dir" ]
+then
+	cd $dir
+	for entry in `ls`
+	do
+		v1=`echo "$entry" | grep "wahle.*"`
+		if [ "$v1" ]
+		then
+			v2=`echo "$v1" | sed -n 's/wahle\(.*\)/\1/p'`
+			#echo "$v2"
+			newfile="whale"$v2
+			echo "$newfile"
+			mv $dir/$v1 $dir/$newfile
+			counter=`expr $counter + 1`
+		fi
+		
+	done
+	echo "$counter number of files renamed"
+
+else
+	echo "Given directory do not exist"
+fi

@@ -1,0 +1,15 @@
+#!/bin/sh
+####################################################
+#
+#Bash shell script date whoami pwd echo
+#
+####################################################
+
+
+echo "Todays date is : `date`"
+
+echo "My login name is : `whoami`"
+
+echo "My home directory is : $HOME"
+
+echo "My current directory is : `pwd`"

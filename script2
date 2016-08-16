@@ -1,0 +1,14 @@
+#!/bin/sh
+##################################################################
+#
+#Bash script - read login name and home drirectory of user
+#
+##################################################################
+
+echo "Input the user name : "
+
+read userName
+
+output=`cat /etc/passwd | grep "$userName" | cut -d : -f6`
+
+echo "$userName home directory is $output"

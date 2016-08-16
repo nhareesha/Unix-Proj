@@ -1,0 +1,46 @@
+#!/bin/sh
+#######################################################
+#
+###Bash script to reomove aordinary files from the given dir 
+#or consider present working directory
+#
+######################################################
+
+read -p "Enter the directory path from which empty files need to be deleted : " dir_nm
+
+echo $dir_nm
+count=0
+
+removeEmptyFile(){
+
+DIR=$1
+	for file in `ls $DIR`
+	do
+		if [ ! -s "$file" ]
+		then
+			echo "$file size is zero"
+			 rm $file
+			count=`expr $count + 1`
+		fi
+	done
+echo "Number of files deleted from the $DIR is $count"
+}
+
+if [ -d "$dir_nm" ]
+then
+	echo "Given directory exists"
+	removeEmptyFile $dir_nm
+		
+else
+	echo "Given directory do not exist, So considering present working directory"
+	removeEmptyFile $pwd
+fi
+
+
+
+
+
+
+
+
+

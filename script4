@@ -1,0 +1,30 @@
+#!/bin/sh
+#############################################################
+#
+#Bash script 4 - Counting numbers from num1 to num2
+#
+#############################################################
+
+echo "Enter number1 : "
+
+read num1
+
+echo "Please enter number 2(greater than num1 ) : "
+
+read num2
+
+if [ "$num2" -gt "$num1" ] 
+then
+	echo "Number sequence from $num1 to $num2"
+	while [ $num1 -le $num2 ]
+	do
+		echo $num1
+		num1=`expr $num1 + 1`
+	done
+else
+	echo "$num2 is less than or equal to $num1"
+fi
+
+
+
+
