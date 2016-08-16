@@ -1,0 +1,215 @@
+#!/bin/sh
+#########################################################################
+#######
+####### Moving arround files and creating links and tar files ###########
+#########################################################################
+
+DIR_LOC="/home/ubuntu/Hareesha"
+file1=$1
+file2=$2
+file3=$3
+
+
+############   Moving raw Files to DIR_LOC location ####################
+
+
+
+if [ -d "$DIR_LOC" ]
+then
+	echo "DIrectory already exists"
+else
+	mkdir $DIR_LOC
+fi
+
+nfile1=$DIR_LOC/logfile
+nfile2=$DIR_LOC/mainscript
+nfile3=$DIR_LOC/testFile
+
+echo $nfile1
+echo $nfile2
+echo $nfile3
+
+if [ -e "$nfile1" ]
+then
+	echo "$nfile1 already exists in target location"
+else
+	cp $file1 $nfile1
+	chmod ugo+x $nfile1
+	chmod ugo+w $nfile1
+	chmod ugo+r $nfile1 
+fi
+
+if [ -e "$nfile2" ] 
+then
+        echo "$nfile2 already exists in target location"
+else
+	cp $file2 $nfile2
+	chmod ugo+x $nfile2
+	chmod ugo+w $nfile2
+	chmod ugo+r $nfile2 
+fi
+
+if [ -e "$nfile3" ] 
+then
+        echo "$nfile3 already exists in target location"
+else
+	cp $file3 $nfile3
+	chmod ugo+x $nfile2
+	chmod ugo+w $nfile2
+	chmod ugo+r $nfile2 
+fi
+  
+#############    Creating Links to some of the file in other Dir  ###############
+
+linkDir="/home/ubuntu/LinksDir"
+
+if [ -d "$linkDir" ]
+then
+	echo "Target directory already existing"
+else
+	mkdir $linkDir
+	echo "Inside 1st else"
+fi
+
+filenm=`echo "$nfile3" | cut -d / -f5`
+echo "$filenm"
+
+linkFile=$linkDir/$filenm
+
+if [ -e "$linkFile" ]
+then
+	echo "Link file already exists in the target location"
+else
+	ln $nfile3 $linkFile
+	if [ $? == 0 ] ##checking the exit status of the link command
+	then
+		echo "Hard link successfully created to targer directory for $nfile3 "
+	else
+		echo "Error in creating the hard link"
+	fi
+	
+fi
+
+########### Keep in a zip file which are having extensions ##########
+
+##All files of DIR_LOC
+
+zipFile=$DIR_LOC/compress.zip
+
+cd "$DIR_LOC" ##Place where zip file need to be created
+
+for file in `ls $DIR_LOC`
+do
+	if [ ! -e "$file" ]
+	then
+		zip -r $zipFile $file
+	
+		if [ $? == 0 ]
+		then
+			echo "File successfully added to zip file"
+		else
+			echo "Error in adding file"
+		fi
+	else
+		echo "$file file already existing"
+	fi
+done
+
+#cd "$HOME" ##changing back to home directory
+
+#################6. Moving zip file to home directory ##############
+zipFileInHome=$HOME/compress.zip
+
+if [ -e "$zipFile" ] && [ ! -e "$zipFileInHome" ]
+then
+	mv $zipFile $HOME
+	if [ $? == 0 ]
+	then
+		echo "$zipFile successfully moved to $HOME"
+	fi
+else
+	echo "$zipFile not found in $DIR_LOC or it is already present in home directory"
+fi
+
+###########4.Keep files in archive or tar file ###############
+
+tarFile=$DIR_LOC/archive.tar
+
+ls  $DIR_LOC | grep ".*[^\.zip]$"
+
+pwd
+
+#This :<<'END'
+cd "$DIR_LOC"
+
+for file in `ls  $DIR_LOC | grep ".*[^\.zip]$"`
+do
+	tar -rvf $tarFile $file
+
+	if [ $? == 0 ]
+	then
+		echo "tar file created successfully $file"
+	else
+		echo "Error in creating tar file $file"
+	fi
+done
+
+#END
+
+############Copy tar file to Home directory #############
+
+tarFilenm=`echo $tarFile | cut -d / -f 5`
+
+#echo $tarFilenm
+
+#:<<'END'
+
+if [ -e "$tarFile" ] && [ ! -e "$HOME/$tarFilenm" ]
+then
+	cp $tarFile $HOME
+else
+	echo " $tarFile not found or it's already existing in HOME directory"
+fi
+
+#END
+
+########## untar tar file in home dir and keep it in separate folder ###########
+
+archiveContents=$HOME/archiveCnts
+
+if [ -e "$HOME/$tarFilenm" ] && [ ! -x "$HOME/$tarFilenm" ]
+then
+	chmod ugo+x $HOME/$tarFilenm
+fi
+
+if [ -e "$HOME/$tarFilenm" ] && [ -x "$HOME/$tarFilenm" ]
+then
+	if [ `tar -tvf $HOME/$tarFilenm|wc -l` != 0 ]
+	then
+		mkdir $archiveContents
+		tar -xvf $HOME/$tarFilenm -C $archiveContents
+	else
+		echo "$HOME/$tarFilenm  has no contents "
+	fi
+else
+	echo " `$HOME/$tarFilenm` doesn't exist or no write permissions"
+fi
+
+##################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,80 @@
+#!/bin/sh
+##########################################
+#### read the text file weblog.txt########
+##########################################
+
+file="/home/ubuntu/weblog.txt"
+
+###Logger utility function ######
+
+log() {
+LOG_LEVEL=$1
+MSG=$2
+REC=$3
+
+if [ "$LOG_LEVEL == ERROR" ]
+then
+	echo "`date` | $LOG_LEVEL | $MSG | $REC" >> logfile
+fi
+}
+
+i=0
+
+while read -r line
+do
+	col3=`echo "$line"|sed -ne 's/.*\(GET.*1\.1\).*/\1/p'`
+
+	col8=`echo "$line"|sed -n 's/.*\(SESSIONID=[[:digit:]]*\).*/\1/p'`
+
+	col2=`echo "$line"|sed -n 's/.*\(\[[[:digit:]]\{1,2\}.*[[:digit:]]\{4\}\]\).*/\1/p'`
+	col2=`echo "$col2"|sed -n 's/^.\(.*\).$/\1/p'`
+
+	##### Extracting  response code and port ######
+
+	col45=`echo "$line"|sed -n 's/.*\(\"\s\+[[:digit:]]\{3\}\s\+[[:digit:]]\{1,5\}\s\+\"\).*/\1/p'`
+	
+	if [ "$col45" ] ##checks to see if reponse code and port exists
+	then	
+		col4=`echo "$col45"|sed -n 's/^\"\s*//p'|grep -o "^[[:digit:]]\{3\}\s*"| sed -n 's/\s\+$//p'`
+		col5=`echo "$col45"|sed -n 's/\s*\"\s*$//p' | grep -o "[[:digit:]]\{1,5\}$"`
+	else
+		col4="\"\""
+		col5="\"\""
+	fi
+	
+	################
+	
+	col1=`echo "$line"|sed -n 's/\([[:digit:]\{1,3\}\..*[[:digit:]]\{1,3\}\s\).*/\1/p'`
+	col1=`echo "$col1"|sed 's/[[:space:]]$//'`
+	
+	#####Extracting the url ######
+	
+	col6=`echo "$line"|sed -n 's/.*\(\"http:\/\/.*\"\s\"\Mozilla\).*/\1/p'| sed -n 's/.\(http:\/\/.*[[:alnum:]]*\"\).*/\1/p'|sed -e 's/\"\s*\"//'`
+
+	if [ ! "$col6" ]
+	then
+		col6="\"\""
+	fi
+	##################
+	
+	col7=`echo "$line"|sed -n 's/.*\(Mozilla.*\/[[:digit:]]\{1,3\}\.[[:digit:]]\{1,3\}\).*/\1/p'`
+	
+	############Entering data into new file
+
+	if [ "$col1" ] && [ "$col2" ] && [ "$col3" ] && [ "$col4" ] && [ "$col5" ] && [ "$col6" ] && [ "$col7" ] && [ "$col8" ]
+	then
+		echo "$col1#$col2#$col3#$col4#$col5#$col6#$col7#$col8" >> weblog1
+	fi
+
+	###### Logger
+
+	if [ `echo "$col6" | grep "^\"\"$"` ]
+	then
+		log ERROR "Error in entring data" "$col1#$col2#$col3#$col4#$col5#$col6#$col7#$col8"
+	fi	
+	###########
+
+done<$file
+
+wc -l weblog1
+

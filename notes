@@ -1,0 +1,81 @@
+
+
+######### To extract the request header ############
+
+sed -ne 's/.*\(\"GET.*1\.1\"\).*/\1/p' /home/ubuntu/test
+
+
+######## To extract session id #####################
+
+sed -n 's/.*\(\"SESSIONID=[[:digit:]]*\"\).*/\1/p' test
+
+without quotes
+
+sed -n 's/.*\(SESSIONID=[[:digit:]]*\).*/\1/p' test
+
+
+######## To get the time stamp ######################
+
+sed -n 's/.*\(\[[[:digit:]]\{1,2\}.*[[:digit:]]\{4\}\]\).*/\1/p' ~/test
+
+to get rid of square breaces
+
+sed -n 's/.*\(\[[[:digit:]]\{1,2\}.*[[:digit:]]\{4\}\]\).*/\1/p' ~/test | sed -n 's/^.\(.*\).$/\1/p'
+
+
+
+######### To extract the response code and port(may be) ############
+
+sed -n 's/.*\(\"\s\+[[:digit:]]\{3\}\s\+[[:digit:]]\{1,\}\s\+\"\).*/\1/p' ~/weblog.txt
+
+-----To clean double quotes and spaces and get first part that is response code
+
+sed -n 's/^\"\s*//p' | grep -o "^[[:digit:]]\{3\}\s*" | sed -n 's/\s\+$//p'
+
+To extract the second part
+
+sed -n 's/\s*\"\s*$//p' | grep -o "[[:digit:]]\{1,5\}$"
+
+
+
+###################### To extract ip address and delete trailing spaces ##############
+
+sed -n 's/\([[:digit:]\{1,3\}\..*[[:digit:]]\{1,3\}\s\).*/\1/p' ~/test | sed 's/[[:space:]]$//'
+
+
+
+######################## To extract the Mozilla....##############################
+
+sed -n 's/.*\(Mozilla.*\/[[:digit:]]\{1,3\}\.[[:digit:]]\{1,3\}\).*/\1/p' test
+
+
+###########to extract the url part that starts with http: #################
+
+sed -n 's/.*\(\"http:\/\/.*\"\s\"\Mozilla\).*/\1/p' ~/weblog.txt | sed -n 's/.\(http:\/\/.*[[:alnum:]]*\"\).*/\1/p' | sed -e 's/\"\s\"//'
+
+
+###############################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

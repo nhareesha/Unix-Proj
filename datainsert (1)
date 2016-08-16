@@ -1,0 +1,57 @@
+#!/bin/bash
+##################################################################
+#
+# Insert the data into mysql database from  parsed file weblog1
+#
+################################################################
+
+input="/home/ubuntu/shellscripts/datainstest"
+
+USER_NAME="hareesha"
+PASSWORD="some_pass"
+DBNAME="unix_shell"
+#PORT="3360"
+HOST_NAME="10.1.19.195"
+
+# First read each line and tokenize based on delimiter
+
+if [ -e "$input" ]
+then
+	while read -r line
+	do
+		IFS="#" read -a arr <<< "$line" #splits line into number of values based on the IFS
+		echo "Number of values ${#arr[@]}"
+		#Reading values into variables
+		var0="${arr[0]}"
+		var1="${arr[1]}"
+		var2="${arr[2]}"
+		var3="${arr[3]}"
+		var4="${arr[4]}"
+		var5="${arr[5]}"
+		var6="${arr[6]}"
+		var7="${arr[7]}"
+		#printing to console
+		echo "$var0"
+		echo "$var1"
+		echo "$var2"
+		echo "$var3"
+		echo "$var4"
+		echo "$var5"
+		echo "$var6"
+		echo "$var7"
+
+		#Connect to MYSQL and push the data into tables
+mysql -h$HOST_NAME -u$USER_NAME -p$PASSWORD -D$DBNAME<<EOFMYSQL
+INSERT INTO WEBLOG (ip,timestamp,rheader,rcode,port,device,browser,session) values ('$var0','$var1','$var2','$var3','$var4','$var5','$var6','$var7');
+			
+EOFMYSQL
+		
+	done < $input
+	echo "data inserted"
+else
+	echo " File do not exist"
+fi
+
+		
+	
+	
